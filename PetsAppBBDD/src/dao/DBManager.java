@@ -105,12 +105,6 @@ public abstract class DBManager<T extends Table> implements DBAccess<T>  {
 	//@Override
 	//public abstract T insert(T object) throws SQLException;   
 
-
-
-	
-	
-
-
 	@Override
 	public T select(int id) throws SQLException { 
 		String strSQL = "SELECT * FROM "+
@@ -368,7 +362,5 @@ public abstract class DBManager<T extends Table> implements DBAccess<T>  {
 		  
 	  return strSQL.toString();	
 	}
-	
-	
 	
 }

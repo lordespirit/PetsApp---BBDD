@@ -1,11 +1,12 @@
 package model;
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class Mascotas extends Table  {
 		
 	private int idPropietario;
     private String nombre; 
-	private Date ingreso;
+    private String tipo;
+	private Timestamp ingreso;
 	private float peso;
 	private float altura;
 	private float largo;
@@ -32,12 +33,20 @@ public class Mascotas extends Table  {
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
+	
+	public void setTipo(String tipo){
+		this.tipo = tipo;
+	}
+	
+	public String getTipo(){
+		return tipo;
+	}
 
-	public Date getIngreso() {
+	public Timestamp getIngreso() {
 		return ingreso;
 	}
 
-	public void setIngreso(Date ingreso) {
+	public void setIngreso(Timestamp ingreso) {
 		this.ingreso = ingreso;
 	}
 
