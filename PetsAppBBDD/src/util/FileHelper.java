@@ -12,7 +12,11 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
+import dao.DBMMascota;
+import dao.DBMPersonas;
 import main.Mascota;
+import model.Mascotas;
+import model.Personas;
 
 
 public class FileHelper {

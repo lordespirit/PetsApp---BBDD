@@ -2,19 +2,22 @@ package main;
 import java.util.ArrayList;
 
 import util.FileHelper;
+import data.BBDDHelper;
 import data.GsonHelper;
+import model.Mascotas;
 import util.Input;
 
 public class PetsApp {
 
 	public static void main(String args[]){	
 		
-		final String FILE = "veterinaria.txt";
-		String str = null; 
-		ArrayList<Mascota> list = null;
+		//final String FILE = "veterinaria.txt";
+		//String str = null; 
+		ArrayList<Mascotas> list = null;
 		
-		str = FileHelper.readFileAsString(FILE);
-		list = GsonHelper.jsonFromArrayListMascotaToJson(str); 
+		//str = FileHelper.readFileAsString(FILE);
+		//list = GsonHelper.jsonFromArrayListMascotaToJson(str);
+		list = BBDDHelper.BbddToList();
 		
 		String option = null;
 		UserInterface.showWelcome();
@@ -79,6 +82,7 @@ public class PetsApp {
 		}while(!option.equals("salir"));
 		str = GsonHelper.listaMascotasToJson(list);
 		FileHelper.writeFileAsString(str, FILE);
+		BBDDHelper.listToBbdd(list);
 	}
 	
 	
