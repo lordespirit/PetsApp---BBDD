@@ -1,7 +1,7 @@
 package model;
 import java.sql.Timestamp;
 
-public class Mascotas extends Table  {
+public class MascotasMod extends Table  {
 		
 	private int idPropietario;
     private String nombre; 
@@ -10,8 +10,9 @@ public class Mascotas extends Table  {
 	private float peso;
 	private float altura;
 	private float largo;
+	private float calidad;
 
-	public Mascotas(){
+	public MascotasMod(){
 		setId(-1); 
 	}
 
@@ -73,7 +74,14 @@ public class Mascotas extends Table  {
 	public void setLargo(float largo) {
 		this.largo = largo;
 	}
-
+	
+	public float getCalidad() {
+		return calidad;
+	}
+	
+	public void setCalidad(float calidad) {
+		this.calidad = calidad;
+	}
 	
 	
 }

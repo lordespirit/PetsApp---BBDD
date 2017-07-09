@@ -1,19 +1,27 @@
 package data;
 
+import java.security.GeneralSecurityException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import dao.DBMMascota;
 import dao.DBMPersonas;
+import main.Ave;
+import main.Canido;
+import main.Felino;
 import main.Mascota;
-import model.Mascotas;
-import model.Personas;
+import main.Person;
+import main.Roedor;
+import model.MascotasMod;
+import model.PersonasMod;
 
 public class BBDDHelper {
 
+	/*
 public static void listToBbdd(ArrayList<Mascota> list) {
 		
-		Mascotas mascotaToBbdd = new Mascotas();
-		Personas personaToBbdd = new Personas();
+		MascotasMod mascotaToBbdd = new MascotasMod();
+		PersonasMod personaToBbdd = new PersonasMod();
 		
 		DBMMascota dbMascota =  new DBMMascota("localhost", "pets", "mascotas"); 	
 		DBMPersonas dbPersona = new DBMPersonas("localhost", "pets", "personas");
@@ -39,7 +47,7 @@ public static void listToBbdd(ArrayList<Mascota> list) {
 			personaToBbdd.setDireccion(mascota.getPropietario().getAddress());
 		
 			try {
-				dbPersona.connect("edu","1234"); 
+				dbPersona.connect("edu","1234");
 				dbPersona.insert(personaToBbdd);
 			} catch (Exception e) {
 				//result = false; 
@@ -71,14 +79,14 @@ public static void listToBbdd(ArrayList<Mascota> list) {
 		
 		
 	}
+	*/
 
-	public static ArrayList<Mascotas> BbddToList() {
+	public static ArrayList<Mascota> BbddToList() {
 		
-		ArrayList<Mascotas> listMascotas = new ArrayList<Mascotas>();
-		ArrayList<Personas> listPersonas = new ArrayList<Personas>();
-		
-		Mascotas mascotaToBbdd = new Mascotas();
-		Personas personaToBbdd = new Personas();
+		ArrayList<MascotasMod> listMascotasMod = new ArrayList<MascotasMod>();
+		@SuppressWarnings("unused")
+		ArrayList<PersonasMod> listPersonasMod = new ArrayList<PersonasMod>();
+		ArrayList<Mascota> list = new ArrayList<Mascota>();
 		
 		DBMMascota dbMascota =  new DBMMascota("localhost", "pets", "mascotas"); 	
 		DBMPersonas dbPersona = new DBMPersonas("localhost", "pets", "personas");
@@ -86,15 +94,59 @@ public static void listToBbdd(ArrayList<Mascota> list) {
 		try {
 			dbMascota.connect("edu","1234");
 			dbPersona.connect("edu", "1234");
-			listMascotas = dbMascota.select("id",">=", "0");
-			listPersonas = dbPersona.select("id",">=", "0");
+			listMascotasMod = dbMascota.select("id",">=", "0");
+			listPersonasMod = dbPersona.select("id",">=", "0");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally{
 			dbMascota.close(); 
 			dbPersona.close();
 		}
-		return listMascotas;
+		
+		for(int i=0;i<listMascotasMod.size();i++){
+			
+			PersonasMod propietario = null;
+			try {
+				propietario = dbPersona.select(listMascotasMod.get(i).getIdPropietario());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			String nombrePropietario = propietario.getNombre();
+			String apellidoPropietario = propietario.getApellido();
+			String telefonoPropietario = propietario.getTelefono();
+			String emailPropietario = propietario.getEmail();
+			String direccionPropietario = propietario.getDireccion();
+			
+			Person person = new Person(nombrePropietario+" "+apellidoPropietario+";"+telefonoPropietario+";"+emailPropietario+";"+direccionPropietario);
+			
+			if(listMascotasMod.get(i).getTipo().equals("canido")){
+				Canido mascota = new Canido(listMascotasMod.get(i).getNombre(),listMascotasMod.get(i).getPeso(),listMascotasMod.get(i).getAltura(),listMascotasMod.get(i).getLargo());
+				mascota.setCalidadColmillo(listMascotasMod.get(i).getCalidad());
+				mascota.setPropietario(person);
+				list.add(mascota);
+				
+			}else if(listMascotasMod.get(i).getTipo().equals("felino")){
+				Felino mascota = new Felino(listMascotasMod.get(i).getNombre(),listMascotasMod.get(i).getPeso(),listMascotasMod.get(i).getAltura(),listMascotasMod.get(i).getLargo());
+				mascota.setCalidadGarras(listMascotasMod.get(i).getCalidad());
+				mascota.setPropietario(person);
+				list.add(mascota);
+				
+			}else if(listMascotasMod.get(i).getTipo().equals("roedor")){
+				Roedor mascota = new Roedor(listMascotasMod.get(i).getNombre(),listMascotasMod.get(i).getPeso(),listMascotasMod.get(i).getAltura(),listMascotasMod.get(i).getLargo());
+				mascota.setCalidadPelaje(listMascotasMod.get(i).getCalidad());
+				mascota.setPropietario(person);
+				list.add(mascota);
+
+			}else{
+				Ave mascota = new Ave(listMascotasMod.get(i).getNombre(),listMascotasMod.get(i).getPeso(),listMascotasMod.get(i).getAltura(),listMascotasMod.get(i).getLargo());
+				mascota.setCalidadPlumas(listMascotasMod.get(i).getCalidad());
+				mascota.setPropietario(person);
+				list.add(mascota);
+
+			}
+		}
+		
+		return list;
 	
 	}
 	

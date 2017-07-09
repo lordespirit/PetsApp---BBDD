@@ -1,6 +1,6 @@
 package model;
 
-public class Personas extends Table {
+public class PersonasMod extends Table {
 
 	private String nombre;
 	private String apellido;
@@ -9,7 +9,7 @@ public class Personas extends Table {
 	private String direccion;
 	
 
-	public Personas(){
+	public PersonasMod(){
 		setId(-1); 
 	}
 

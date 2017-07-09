@@ -15,8 +15,8 @@ import java.util.List;
 import dao.DBMMascota;
 import dao.DBMPersonas;
 import main.Mascota;
-import model.Mascotas;
-import model.Personas;
+import model.MascotasMod;
+import model.PersonasMod;
 
 
 public class FileHelper {

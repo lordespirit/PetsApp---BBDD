@@ -108,14 +108,12 @@ public abstract class DBManager<T extends Table> implements DBAccess<T>  {
 	@Override
 	public T select(int id) throws SQLException { 
 		String strSQL = "SELECT * FROM "+
-				getDbTable() +" WHERE id = ?";
+				getDbTable() +" WHERE id = "+id;
 
 		PreparedStatement preparedStatement=null; 
 		T generic = null; 
 		try {			
-			preparedStatement = getConnected()
-					.prepareStatement(strSQL);			
-			preparedStatement.setInt(1,id);			
+			preparedStatement = getConnected().prepareStatement(strSQL);				
 			ResultSet resultSet = preparedStatement.executeQuery(); 
 			
 			ArrayList<T> list = resultSetToGeneric(resultSet);

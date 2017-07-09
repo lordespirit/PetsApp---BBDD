@@ -8,7 +8,7 @@ import java.sql.Date;
  *
  */
 
-public class Comments extends Table {
+public class CommentsMod extends Table {
 	    
 
 	    private String myUser; 
@@ -18,7 +18,7 @@ public class Comments extends Table {
 		private String summary;
 		private String comments; 
 		
-		public Comments(){
+		public CommentsMod(){
 			setId(-1); 
 		}
 	

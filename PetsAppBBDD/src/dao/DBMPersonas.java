@@ -2,16 +2,16 @@ package dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-import model.Personas;
+import model.PersonasMod;
 
-public class DBMPersonas extends DBManager<Personas> {
+public class DBMPersonas extends DBManager<PersonasMod> {
 
 	public DBMPersonas(String dbhost, String dbName, String dbTable) {
 		super(dbhost, dbName, dbTable);
 	}
 
 	@Override
-	protected Personas mapDbToObject(ResultSet resultSet) throws SQLException {
+	protected PersonasMod mapDbToObject(ResultSet resultSet) throws SQLException {
 		
     	int id = resultSet.getInt("id");
         String nombre = resultSet.getString("nombre");
@@ -20,7 +20,7 @@ public class DBMPersonas extends DBManager<Personas> {
         String telefono = resultSet.getString("telefono");
         String direccion = resultSet.getString("direccion");
 
-        Personas persona = new Personas();    
+        PersonasMod persona = new PersonasMod();    
         persona.setId(id);
         persona.setNombre(nombre);
         persona.setApellido(apellido);
@@ -30,7 +30,7 @@ public class DBMPersonas extends DBManager<Personas> {
         return persona; 
 	}
 
-	protected HashMap<String,Object> mapObjectToDb(Personas persona){
+	protected HashMap<String,Object> mapObjectToDb(PersonasMod persona){
 		HashMap<String,Object> map = new HashMap<String,Object>();
 		map.put("id", persona.getId());
 		map.put("nombre",persona.getNombre()); 

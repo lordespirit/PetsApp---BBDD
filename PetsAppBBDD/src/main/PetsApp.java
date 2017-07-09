@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import util.FileHelper;
 import data.BBDDHelper;
 import data.GsonHelper;
-import model.Mascotas;
+import model.MascotasMod;
 import util.Input;
 
 public class PetsApp {
@@ -13,11 +13,10 @@ public class PetsApp {
 		
 		//final String FILE = "veterinaria.txt";
 		//String str = null; 
-		ArrayList<Mascotas> list = null;
+		ArrayList<Mascota> list = null;
 		
 		//str = FileHelper.readFileAsString(FILE);
 		//list = GsonHelper.jsonFromArrayListMascotaToJson(str);
-		list = BBDDHelper.BbddToList();
 		
 		String option = null;
 		UserInterface.showWelcome();
@@ -27,10 +26,10 @@ public class PetsApp {
 			switch(option){
 				case "añadir":
 					Mascota newMascota = UserInterface.scanMascota(list);
-					UserInterface.addMascota(newMascota,list);
+					UserInterface.addMascota(newMascota);
 					break;
 				case "listar":
-					UserInterface.listAllMascotas(list);
+					UserInterface.listAllMascotas(BBDDHelper.BbddToList());
 					break;
 				case "eliminar":
 					UserInterface.showMenuDelete();
@@ -80,9 +79,9 @@ public class PetsApp {
 					break;
 			}	
 		}while(!option.equals("salir"));
-		str = GsonHelper.listaMascotasToJson(list);
-		FileHelper.writeFileAsString(str, FILE);
-		BBDDHelper.listToBbdd(list);
+		//str = GsonHelper.listaMascotasToJson(list);
+		//FileHelper.writeFileAsString(str, FILE);
+		//BBDDHelper.listToBbdd(list);
 	}
 	
 	

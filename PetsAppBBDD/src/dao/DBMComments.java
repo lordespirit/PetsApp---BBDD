@@ -8,16 +8,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import model.Comments;
+import model.CommentsMod;
 
-public class DBMComments extends DBManager<Comments>{
+public class DBMComments extends DBManager<CommentsMod>{
 
 	public DBMComments(String dbhost, String dbName, String dbTable) {
 		super(dbhost, dbName, dbTable);
 	}
 
 	@Override
-	protected Comments mapDbToObject(ResultSet resultSet) throws SQLException {
+	protected CommentsMod mapDbToObject(ResultSet resultSet) throws SQLException {
 		// lee el resultado i 
     	int id = resultSet.getInt("id");
         String user = resultSet.getString("myuser");
@@ -27,7 +27,7 @@ public class DBMComments extends DBManager<Comments>{
         Date date = resultSet.getDate("datum");
         String comments = resultSet.getString("comments");
    
-        Comments comment = new Comments();    
+        CommentsMod comment = new CommentsMod();    
         comment.setId(id);
         comment.setEmail(email);
         comment.setDatum(date);
@@ -38,7 +38,7 @@ public class DBMComments extends DBManager<Comments>{
         return comment; 
 	}
 
-	protected HashMap<String,Object> mapObjectToDb(Comments comment){
+	protected HashMap<String,Object> mapObjectToDb(CommentsMod comment){
 		HashMap<String,Object> map = new HashMap<String,Object>();
 		map.put("myuser",comment.getMyUser()); 
 		map.put("email",comment.getEmail()); 

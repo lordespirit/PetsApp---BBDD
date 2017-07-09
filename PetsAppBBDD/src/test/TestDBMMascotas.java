@@ -16,7 +16,7 @@ public class TestDBMMascotas {
 		DBMMascota dbManager =   new DBMMascota("localhost", "pets", "mascotas"); 	
 		
 		Ave ave1 = new Ave("Piolin",0.20f,0.11f,0.04f);
-		Mascotas mascota1 = new Mascotas();
+		MascotasMod mascota1 = new MascotasMod();
 		mascota1.setNombre(ave1.getNombre());
 		mascota1.setIdPropietario(1);
 		mascota1.setPeso(ave1.getPeso());
@@ -25,7 +25,7 @@ public class TestDBMMascotas {
 		mascota1.setTipo(ave1.getClass().getSimpleName().toLowerCase());
 		
 		Canido can1 = new Canido("Rex",32f,0.46f,0.84f);
-		Mascotas mascota2 = new Mascotas();
+		MascotasMod mascota2 = new MascotasMod();
 		mascota2.setNombre(can1.getNombre());
 		mascota2.setIdPropietario(2);
 		mascota2.setPeso(can1.getPeso());
@@ -34,7 +34,7 @@ public class TestDBMMascotas {
 		mascota2.setTipo(can1.getClass().getSimpleName().toLowerCase());
 		
 		Felino fel1 = new Felino("Paco",13f,0.28f,0.52f);
-		Mascotas mascota3 = new Mascotas();
+		MascotasMod mascota3 = new MascotasMod();
 		mascota3.setNombre(fel1.getNombre());
 		mascota3.setIdPropietario(1);
 		mascota3.setPeso(fel1.getPeso());
@@ -43,7 +43,7 @@ public class TestDBMMascotas {
 		mascota3.setTipo(fel1.getClass().getSimpleName().toLowerCase());
 		
 		Roedor roe1 = new Roedor("Tod",0.02f,0.1f,0.07f);
-		Mascotas mascota4 = new Mascotas();
+		MascotasMod mascota4 = new MascotasMod();
 		mascota4.setNombre(roe1.getNombre());
 		mascota4.setIdPropietario(6);
 		mascota4.setPeso(roe1.getPeso());
@@ -81,7 +81,7 @@ public class TestDBMMascotas {
 		boolean result = true;
 		DBMMascota dbManager =   new DBMMascota("localhost", "pets", "mascotas"); 		
 		
-		ArrayList<Mascotas> results = null;  
+		ArrayList<MascotasMod> results = null;  
 
 		try {
 			
@@ -99,7 +99,7 @@ public class TestDBMMascotas {
 		Assert.assertEquals(true,result);
 		Assert.assertEquals(4,results.size());
 		
-		for(Mascotas rs: results)
+		for(MascotasMod rs: results)
 		System.out.println("Nombre: " + rs.getNombre() + "\tClase: " + rs.getTipo() + "\t| Peso: " + rs.getPeso() + " Kg\t| Ingreso: " +rs.getIngreso());
 
 	}

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.Test;
 import dao.DBMComments;
-import model.Comments;
+import model.CommentsMod;
 
 public class TestDBMComments {
 
@@ -12,7 +12,7 @@ public class TestDBMComments {
 	public void testInsert(){
 		boolean result = true;
 		DBMComments dbManager =   new DBMComments("localhost", "dbTest", "comments"); 		
-		Comments comments1 =getMockDBMComments(); 
+		CommentsMod comments1 =getMockDBMComments(); 
 		
 		try {
 			dbManager.connect("edu","1234"); 
@@ -34,8 +34,8 @@ public class TestDBMComments {
 	public void testUpdate(){
 		boolean result = true;
 		DBMComments dbManager =   new DBMComments("localhost", "dbTest", "comments"); 
-		Comments comments1 =getMockDBMComments();
-		Comments commentsUpdated=null; 
+		CommentsMod comments1 =getMockDBMComments();
+		CommentsMod commentsUpdated=null; 
 		
 		try {
 			dbManager.connect("edu","1234"); 
@@ -75,8 +75,8 @@ public class TestDBMComments {
 	public void testGet(){
 		boolean result = true;
 		DBMComments dbManager =   new DBMComments("localhost", "dbTest", "comments"); 		
-		Comments comments1 =getMockDBMComments(); 
-		Comments results = null; 
+		CommentsMod comments1 =getMockDBMComments(); 
+		CommentsMod results = null; 
 		try {
 			dbManager.connect("edu","1234"); 
 			
@@ -102,15 +102,15 @@ public class TestDBMComments {
 		boolean result = true;
 		DBMComments dbManager =   new DBMComments("localhost", "dbTest", "comments"); 		
 		
-		Comments comments1 =getMockDBMComments("user1","user1@poo.com");
-		Comments comments2 =getMockDBMComments("user2","user2@poo.com");
-		Comments comments3 =getMockDBMComments("user3","user3@poo.com");
-		Comments comments4 =getMockDBMComments("user1","user4@poo.com");
-		Comments comments5 =getMockDBMComments("xuser","user4@poo.com");
+		CommentsMod comments1 =getMockDBMComments("user1","user1@poo.com");
+		CommentsMod comments2 =getMockDBMComments("user2","user2@poo.com");
+		CommentsMod comments3 =getMockDBMComments("user3","user3@poo.com");
+		CommentsMod comments4 =getMockDBMComments("user1","user4@poo.com");
+		CommentsMod comments5 =getMockDBMComments("xuser","user4@poo.com");
 		
-		ArrayList<Comments> results1 = null;  
-		ArrayList<Comments> results2 = null;
-		ArrayList<Comments> results3 = null;
+		ArrayList<CommentsMod> results1 = null;  
+		ArrayList<CommentsMod> results2 = null;
+		ArrayList<CommentsMod> results3 = null;
 		
 		try {
 			
@@ -141,12 +141,12 @@ public class TestDBMComments {
 	
 
 	
-	private Comments getMockDBMComments() { 
+	private CommentsMod getMockDBMComments() { 
 		return getMockDBMComments("root", "root@boss.com"); 
 	}
 
-	private Comments getMockDBMComments(String myUser, String email) { 
-		Comments comments1 = new Comments();
+	private CommentsMod getMockDBMComments(String myUser, String email) { 
+		CommentsMod comments1 = new CommentsMod();
 		comments1.setMyUser(myUser);
 		comments1.setEmail(email); 
 		comments1.setSummary("Esto es un resumen"); 
