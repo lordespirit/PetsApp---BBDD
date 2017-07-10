@@ -2,17 +2,15 @@ package main;
 
 public class Roedor extends Mascota {
 
-	private float calidadPelaje;
 	
 	// Llamada al método constructor del padre
-	public Roedor(String nombre, float peso, float altura, float largo) {
-		super(nombre, peso, altura, largo);
-		this.calidadPelaje = 1;
+	public Roedor(String nombre, float peso, float altura, float largo, float calidad){
+		super(nombre, peso, altura, largo, calidad);
 	}
 
 	@Override
 	public float getPesoRacion() {
-		return 0.1f*getPeso()*(2f-calidadPelaje);
+		return 0.1f*getPeso()*(2f-getCalidad());
 	}
 	
 	@Override
@@ -20,14 +18,7 @@ public class Roedor extends Mascota {
 		return getPeso()/((0.3f*getAltura())*getLargo());
 	}
 
-	public float getCalidadPelaje() {
-		return calidadPelaje;
-	}
 
-	public void setCalidadPelaje(float calidadPelaje) {
-		this.calidadPelaje = calidadPelaje;
-	}
-	
 	@Override
 	protected String getTypeClass() {
 		return getClass().getName();

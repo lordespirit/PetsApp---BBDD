@@ -1,6 +1,7 @@
 package main;
 
 import java.util.ArrayList;
+
 import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -8,7 +9,6 @@ import java.util.TreeMap;
 import dao.DBMMascota;
 import dao.DBMPersonas;
 import data.GsonHelper;
-import data.StringHelper;
 import model.MascotasMod;
 import model.PersonasMod;
 import util.Finder;
@@ -18,6 +18,7 @@ public class UserInterface {
 	
 	private static final String[] ESPECIES = new String[]{"gato", "perro", "ave", "roedor"};
 		
+	@SuppressWarnings("rawtypes")
 	static Map<String, Class> map = new TreeMap<String, Class>();
 	/** Adicione las clases que sea necesario */
 	 static {
@@ -26,18 +27,7 @@ public class UserInterface {
 	        map.put(ESPECIES[2],Ave.class);
 	        map.put(ESPECIES[3],Roedor.class);
 	    } 
-	
-	public interface CheckFormat{
-		boolean checkBadFormat(String str); 
-	}
-	
-	private static CheckFormat  checkFloat  =  new CheckFormat() {
-		@Override
-		public boolean checkBadFormat(String str) {
-			return str.equals("") || !StringHelper.isFloat(str); 
-		}
-}; 
-	
+
 	public static void showWelcome(){
 		System.out.println("**************************************");
 		System.out.println("************* BIENVENIDO *************");
@@ -68,6 +58,7 @@ public class UserInterface {
 		float peso;	
 		float altura;
 		float largo;
+		float calidad;
 		Canido newCanido = null;
 		Felino newFelino = null;
 		Roedor newRoedor = null;
@@ -92,58 +83,20 @@ public class UserInterface {
 			System.out.print("> Largo [formato metros ','] : ");
 			largo = Input.scannFloat();
 			
-			if(tipo.equals("canido")){
-				
-				newCanido = new Canido(name,peso,altura,largo);
-				float calidadColmillo;
-				do{
-					System.out.print("> Calidad de colmillo [formato de 0,0 a 1,0] : ");
-					calidadColmillo = Input.scannFloat();
-					if(calidadColmillo<0||calidadColmillo>1){
-						System.err.println("Calidad colmillo entre 0 y 1");
-					}
-				}while(calidadColmillo<0||calidadColmillo>1);
-				newCanido.setCalidadColmillo(calidadColmillo);
-				
-			}else if(tipo.equals("felino")){
-				
-				newFelino = new Felino(name,peso,altura,largo);
-				float calidadGarras;
-				do{
-					System.out.print("> Calidad de garras [formato de 0,0 a 1,0] : ");
-					calidadGarras = Input.scannFloat();
-					if(calidadGarras<0||calidadGarras>1){
-						System.err.println("Calidad garras entre 0 y 1");
-					}
-				}while(calidadGarras<0||calidadGarras>1);
-				newFelino.setCalidadGarras(calidadGarras);
-				
-			}else if(tipo.equals("roedor")){
-				
-				newRoedor = new Roedor(name,peso,altura,largo);
-				float calidadPelaje;
-				do{
-					System.out.print("> Calidad de pelaje [formato de 0,0 a 1,0] : ");
-					calidadPelaje = Input.scannFloat();
-					if(calidadPelaje<0||calidadPelaje>1){
-						System.err.println("Calidad pelaje entre 0 y 1");
-					}
-				}while(calidadPelaje<0||calidadPelaje>1);
-				newRoedor.setCalidadPelaje(calidadPelaje);
-				
-			}else{
-				
-				newAve = new Ave(name,peso,altura,largo);
-				float calidadPlumas;
-				do{
-					System.out.print("> Calidad de plumas [formato de 0,0 a 1,0] : ");
-					calidadPlumas = Input.scannFloat();
-					if(calidadPlumas<0||calidadPlumas>1){
-						System.err.println("Calidad plumas entre 0 y 1");
-					}
-				}while(calidadPlumas<0||calidadPlumas>1);
-				newAve.setCalidadPlumas(calidadPlumas);
-			}	
+			do{	System.out.print("> Calidad - Estado de salud visual [formato de 0,0 a 1,0] : ");
+				calidad = Input.scannFloat();
+				if(calidad<0||calidad>1)
+					System.err.println("Calidad entre 0 y 1");
+			}while(calidad<0||calidad>1);
+			
+			if(tipo.equals("canido"))
+				newCanido = new Canido(name,peso,altura,largo,calidad);
+			else if(tipo.equals("felino"))
+				newFelino = new Felino(name,peso,altura,largo,calidad);
+			else if(tipo.equals("roedor"))
+				newRoedor = new Roedor(name,peso,altura,largo,calidad);
+			else
+				newAve = new Ave(name,peso,altura,largo,calidad);
 			
 		}while(name.equals("")||peso<=0||altura<=0||largo<=0);
 		
@@ -410,31 +363,51 @@ public class UserInterface {
 
 			System.out.println("********************* Menú eliminación por búsqueda de Mascota por nombre *********************");
 			String nombreMascota = scanNombreMascota();
-			ArrayList<Mascota> listadoDeBusqueda= searchNameMascota(list, nombreMascota);
-			if(listadoDeBusqueda==null){
+			DBMMascota dbManagerMascotas = new DBMMascota("localhost", "pets", "mascotas");
+			ArrayList<MascotasMod> resultado = null;
+			try {
+				dbManagerMascotas.connect("edu","1234");
+				
+				resultado = dbManagerMascotas.select("nombre", "LIKE", "'"+nombreMascota+"%'");
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				dbManagerMascotas.close(); 
+			}
+						if(resultado==null){
 				System.err.println("No se encontraron resultados");
-			}else if(listadoDeBusqueda.size()==1){
-				String estasSeguro;
-				System.out.println("Nombre Mascota " + listadoDeBusqueda.get(0).getNombre() + " Tipo: " + listadoDeBusqueda.get(0).getClass().getSimpleName());
-				System.out.print("Estás seguro de querer borrarla? : ");
-				estasSeguro = Input.scannLine();
-				if(estasSeguro.toLowerCase().toCharArray()[0]=='s'){
-					removeMascota(0,listadoDeBusqueda);
-				}
 			}else{
-				int index;
+				Integer index;
+				Integer arrayIndex[];
+				Integer i = 0;
+				boolean isCorrect = false;
 				do{
-					listAllMascotas(listadoDeBusqueda);
-					System.out.println("Hay varias coincidencias.");
+					for(MascotasMod mascota: resultado)
+						i++;
+					arrayIndex = new Integer[i];
+					i=0;
 					System.out.print("Selecciona el número de índice a eliminar : ");
+					for(MascotasMod mascota: resultado){
+						System.out.println("ID: " + mascota.getId() +" | Nombre: " +mascota.getNombre() + " | Tipo: " + mascota.getTipo());
+						arrayIndex[i++] = mascota.getId();
+					}
 					index = Input.scannInt();
-					if(index<1||index>listadoDeBusqueda.size()){
+					isCorrect = checkIndex(arrayIndex,index);
+					if(!isCorrect){
 						System.err.println("Error, índice incorrecto.");
 					}
-				}while(index<1||index>listadoDeBusqueda.size());
-				index--;
-				int indexReal = list.indexOf(listadoDeBusqueda.get(index));
-				removeMascota(indexReal,list);
+				}while(!isCorrect);
+			
+				try {
+					dbManagerMascotas.connect("edu", "1234");
+					dbManagerMascotas.delete(index);
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}finally{
+					dbManagerMascotas.close();
+				}
 			}
 		}
 	}
@@ -446,36 +419,90 @@ public class UserInterface {
 		}else{
 
 			System.out.println("********************* Menú eliminación por búsqueda de Propietario por nombre *********************");
-			String nombrePropietario = scanNombreMascota();
-			ArrayList<Mascota> listadoDeBusqueda= searchNamePropietario(list, nombrePropietario);
-			if(listadoDeBusqueda==null){
+			System.out.println("************************* Eliminar al propietario eliminará sus Mascotas **************************");
+
+			String nombrePropietario = scanNombrePropietario();
+			DBMPersonas dbManagerPersonas = new DBMPersonas("localhost", "pets", "personas");
+			ArrayList<PersonasMod> resultado = null;
+			try {
+				dbManagerPersonas.connect("edu","1234");
+				
+				resultado = dbManagerPersonas.select("nombre", "LIKE", "'"+nombrePropietario+"%'");
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				dbManagerPersonas.close(); 
+			}
+						if(resultado==null){
 				System.err.println("No se encontraron resultados");
-			}else if(listadoDeBusqueda.size()==1){
-				String estasSeguro;
-				System.out.println("Nombre Mascota: " + listadoDeBusqueda.get(0).getNombre() + " Tipo: " + listadoDeBusqueda.get(0).getClass().getSimpleName());
-				System.out.print("Estás seguro de querer borrarla? : ");
-				estasSeguro = Input.scannLine();
-				if(estasSeguro.toLowerCase().toCharArray()[0]=='s'){
-					removeMascota(0,listadoDeBusqueda);
-				}
 			}else{
-				int index;
+				Integer index;
+				Integer arrayIndex[];
+				Integer i = 0;
+				boolean isCorrect = false;
 				do{
-					listAllMascotas(listadoDeBusqueda);
-					System.out.println("Hay varias coincidencias.");
+					for(PersonasMod person: resultado)
+						i++;
+					arrayIndex = new Integer[i];
+					i=0;
 					System.out.print("Selecciona el número de índice a eliminar : ");
+					for(PersonasMod person: resultado){
+						System.out.println("ID: " + person.getId() +" | Nombre: " +person.getNombre() + " | Apellido: " + person.getApellido());
+						arrayIndex[i++] = person.getId();
+					}
 					index = Input.scannInt();
-					if(index<1||index>listadoDeBusqueda.size()){
+					isCorrect = checkIndex(arrayIndex,index);
+					if(!isCorrect){
 						System.err.println("Error, índice incorrecto.");
 					}
-				}while(index<1||index>listadoDeBusqueda.size());
-				index--;
-				int indexReal = list.indexOf(listadoDeBusqueda.get(index));
-				removeMascota(indexReal,list);
+				}while(!isCorrect);
+				
+				DBMPersonas dbManagerPersonasRemove = new DBMPersonas("localhost", "pets", "personas");
+				DBMMascota dbManagerMascotas =   new DBMMascota("localhost", "pets", "mascotas");
+				
+				ArrayList<MascotasMod> mascotasTodas = null;
+				
+				try {
+					dbManagerMascotas.connect("edu", "1234");
+					mascotasTodas = dbManagerMascotas.select("id",">=","0");
+					for(MascotasMod mascota: mascotasTodas){
+						if(mascota.getIdPropietario()==index){
+							try {
+								dbManagerMascotas.connect("edu","1234");
+								dbManagerMascotas.delete(mascota.getId());
+								
+							} catch (Exception e) {
+								e.printStackTrace();
+							}finally{
+								dbManagerMascotas.close();
+							}
+						}
+					}
+					
+					dbManagerMascotas.connect("edu","1234"); 
+					dbManagerPersonasRemove.connect("edu","1234");
+					dbManagerPersonasRemove.delete(index);
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}finally{
+					dbManagerMascotas.close(); 
+					dbManagerPersonasRemove.close();
+				}
 			}
 		}
 	}
 	
+	private static boolean checkIndex(Integer[] arrayIndex, Integer index) {
+		for(int i=0;i<arrayIndex.length;i++){
+			if(index==arrayIndex[i]){
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static void editByMascotaNombre(ArrayList<Mascota> list) {
 		
 		if(list.size()==0){
@@ -576,6 +603,9 @@ public class UserInterface {
 		}else{
 
 			int id = -1;
+			int newid = 0;
+			MascotasMod mascota = new MascotasMod();
+			
 			for(int i=0;i<listPersonasMod.size();i++){
 				if(newMascota.getPropietario().getName().toLowerCase().equals(listPersonasMod.get(i).getNombre().toLowerCase())&&
 						newMascota.getPropietario().getSurname().toLowerCase().equals(listPersonasMod.get(i).getApellido().toLowerCase())&&
@@ -587,51 +617,17 @@ public class UserInterface {
 			}
 			
 			if(id>=0){
-				if(newMascota.getClass().getSimpleName().toLowerCase().equals("canido")){
-					Canido obtainCalidadMascota = (Canido) newMascota;
-					MascotasMod mascota = new MascotasMod();
-					mascota.setNombre(newMascota.getNombre());
-					mascota.setIdPropietario(id);
-					mascota.setPeso(newMascota.getPeso());
-					mascota.setAltura(newMascota.getAltura());
-					mascota.setLargo(newMascota.getLargo());
-					mascota.setTipo(newMascota.getClass().getSimpleName().toLowerCase());
-					mascota.setCalidad(obtainCalidadMascota.getCalidadColmillo());
-				}else if(newMascota.getClass().getSimpleName().toLowerCase().equals("felino")){
-					Felino obtainCalidadMascota = (Felino) newMascota;
-					MascotasMod mascota = new MascotasMod();
-					mascota.setNombre(newMascota.getNombre());
-					mascota.setIdPropietario(id);
-					mascota.setPeso(newMascota.getPeso());
-					mascota.setAltura(newMascota.getAltura());
-					mascota.setLargo(newMascota.getLargo());
-					mascota.setTipo(newMascota.getClass().getSimpleName().toLowerCase());
-					mascota.setCalidad(obtainCalidadMascota.getCalidadGarras());
-				}else if(newMascota.getClass().getSimpleName().toLowerCase().equals("roedor")){
-					Roedor obtainCalidadMascota = (Roedor) newMascota;
-					MascotasMod mascota = new MascotasMod();
-					mascota.setNombre(newMascota.getNombre());
-					mascota.setIdPropietario(id);
-					mascota.setPeso(newMascota.getPeso());
-					mascota.setAltura(newMascota.getAltura());
-					mascota.setLargo(newMascota.getLargo());
-					mascota.setTipo(newMascota.getClass().getSimpleName().toLowerCase());
-					mascota.setCalidad(obtainCalidadMascota.getCalidadPelaje());
-				}else{
-					Ave obtainCalidadMascota = (Ave) newMascota;
-					MascotasMod mascota = new MascotasMod();
-					mascota.setNombre(newMascota.getNombre());
-					mascota.setIdPropietario(id);
-					mascota.setPeso(newMascota.getPeso());
-					mascota.setAltura(newMascota.getAltura());
-					mascota.setLargo(newMascota.getLargo());
-					mascota.setTipo(newMascota.getClass().getSimpleName().toLowerCase());
-					mascota.setCalidad(obtainCalidadMascota.getCalidadPlumas());
-				}
 				
+				mascota.setNombre(newMascota.getNombre());
+				mascota.setIdPropietario(id);
+				mascota.setPeso(newMascota.getPeso());
+				mascota.setAltura(newMascota.getAltura());
+				mascota.setLargo(newMascota.getLargo());
+				mascota.setTipo(newMascota.getClass().getSimpleName().toLowerCase());
+				mascota.setCalidad(newMascota.getCalidad());	
 				
 			}else{
-				int newid = 0;
+				
 				PersonasMod persona = new PersonasMod();
 				persona.setNombre(newMascota.getPropietario().getName());
 				persona.setApellido(newMascota.getPropietario().getSurname());
@@ -651,58 +647,26 @@ public class UserInterface {
 					dbManager.close(); 
 				}
 				
-				MascotasMod mascota = new MascotasMod();
-				
-				if(newMascota.getClass().getSimpleName().toLowerCase().equals("canido")){
-					Canido obtainCalidadMascota = (Canido) newMascota;
 					mascota.setNombre(newMascota.getNombre());
 					mascota.setIdPropietario(newid);
 					mascota.setPeso(newMascota.getPeso());
 					mascota.setAltura(newMascota.getAltura());
 					mascota.setLargo(newMascota.getLargo());
 					mascota.setTipo(newMascota.getClass().getSimpleName().toLowerCase());
-					mascota.setCalidad(obtainCalidadMascota.getCalidadColmillo());
-				}else if(newMascota.getClass().getSimpleName().toLowerCase().equals("felino")){
-					Felino obtainCalidadMascota = (Felino) newMascota;
-					mascota.setNombre(newMascota.getNombre());
-					mascota.setIdPropietario(newid);
-					mascota.setPeso(newMascota.getPeso());
-					mascota.setAltura(newMascota.getAltura());
-					mascota.setLargo(newMascota.getLargo());
-					mascota.setTipo(newMascota.getClass().getSimpleName().toLowerCase());
-					mascota.setCalidad(obtainCalidadMascota.getCalidadGarras());
-				}else if(newMascota.getClass().getSimpleName().toLowerCase().equals("roedor")){
-					Roedor obtainCalidadMascota = (Roedor) newMascota;
-					mascota.setNombre(newMascota.getNombre());
-					mascota.setIdPropietario(newid);
-					mascota.setPeso(newMascota.getPeso());
-					mascota.setAltura(newMascota.getAltura());
-					mascota.setLargo(newMascota.getLargo());
-					mascota.setTipo(newMascota.getClass().getSimpleName().toLowerCase());
-					mascota.setCalidad(obtainCalidadMascota.getCalidadPelaje());
-				}else{
-					Ave obtainCalidadMascota = (Ave) newMascota;
-					mascota.setNombre(newMascota.getNombre());
-					mascota.setIdPropietario(newid);
-					mascota.setPeso(newMascota.getPeso());
-					mascota.setAltura(newMascota.getAltura());
-					mascota.setLargo(newMascota.getLargo());
-					mascota.setTipo(newMascota.getClass().getSimpleName().toLowerCase());
-					mascota.setCalidad(obtainCalidadMascota.getCalidadPlumas());
-				}
+					mascota.setCalidad(newMascota.getCalidad());
+	
+			}
+			
+			DBMMascota connectMascota =   new DBMMascota("localhost", "pets", "mascotas"); 
+			
+			try {
+				connectMascota.connect("edu","1234"); 
+				newid = connectMascota.insert(mascota);
+			} catch (Exception e) {
+				e.printStackTrace();
 				
-				DBMMascota connectMascota =   new DBMMascota("localhost", "pets", "mascotas"); 
-				
-				try {
-					connectMascota.connect("edu","1234"); 
-					newid = connectMascota.insert(mascota);
-				} catch (Exception e) {
-					e.printStackTrace();
-					
-				}finally{
-					connectMascota.close(); 
-				}
-				
+			}finally{
+				connectMascota.close(); 
 			}
 			
 			}
@@ -739,15 +703,30 @@ public class UserInterface {
 		if(list.size()==0){
 			System.out.println("Lista vacía. No hay resultados.");
 		}else{
-			System.out.println("*********************************************************************************************************************");
+			System.out.println("***********************************************************************************************************************************");
 			for(int i=0;i<list.size();i++){
-				System.out.println(i+1 + " -> " + "Tipo: " + list.get(i).getClass().getSimpleName() +
-						", Nombre: " +list.get(i).getNombre() + ", Peso: " + list.get(i).getPeso() +
-						", Altura: " + list.get(i).getAltura() + ", Largo: " + list.get(i).getLargo() + 
-						", Estado Nutricion: " + list.get(i).getEstadoNutricion() + ", Ración: " +list.get(i).getPesoRacion());
-				System.out.println("Propietario: " + list.get(i).getPropietario().getFullName() + ", " + list.get(i).getPropietario().getPhone() +
+			System.out.print(i+1 + " -> " + "Tipo: " + list.get(i).getClass().getSimpleName() +
+					", Nombre: " +list.get(i).getNombre() + ", Peso: " + list.get(i).getPeso() +
+					", Altura: " + list.get(i).getAltura() + ", Largo: " + list.get(i).getLargo() + 
+					", Estado Nutricion: " + list.get(i).getEstadoNutricion() + ", Ración: " +list.get(i).getPesoRacion());
+			
+				if(list.get(i).getClass().getSimpleName().toLowerCase().equals("canido")){
+					Canido mascota = (Canido) list.get(i);
+					System.out.print(", Calidad de Colmillos: " + mascota.getCalidad());
+				}else if(list.get(i).getClass().getSimpleName().toLowerCase().equals("felino")){
+					Felino mascota = (Felino) list.get(i);
+					System.out.print(", Calidad de Garras: " + mascota.getCalidad());
+				}else if(list.get(i).getClass().getSimpleName().toLowerCase().equals("roedor")){
+					Roedor mascota = (Roedor) list.get(i); 
+					System.out.print(", Calidad de Pelaje: " + mascota.getCalidad());
+				}else{
+					Ave mascota = (Ave) list.get(i);
+					System.out.print(", Calidad de Pico: " + mascota.getCalidad());
+				}
+				
+				System.out.println("\nPropietario: " + list.get(i).getPropietario().getFullName() + ", " + list.get(i).getPropietario().getPhone() +
 				", " +list.get(i).getPropietario().getEmail() + ", " +list.get(i).getPropietario().getAddress());
-				System.out.println("*********************************************************************************************************************");
+				System.out.println("***********************************************************************************************************************************");
 			}
 		}
 		
@@ -765,7 +744,20 @@ public class UserInterface {
 					System.out.println("Error, índice incorrecto, vuelve a probar");
 				}
 			}while(index<1||index>list.size());
-		removeMascota(--index, list);
+			
+			DBMMascota dbManagerMascotas =   new DBMMascota("localhost", "pets", "mascotas");
+			
+			try {
+				
+				dbManagerMascotas.connect("edu","1234"); 
+				
+				dbManagerMascotas.delete(index);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				dbManagerMascotas.close(); 
+			}
 		}
 	}
 	

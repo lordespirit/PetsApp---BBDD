@@ -15,17 +15,19 @@ public abstract class Mascota {
 	private float peso;
 	private float altura;
 	private float largo;
+	private float calidad;
 	
 	public Mascota(){
 		typeClass= getTypeClass(); 
 	}
 	
-	public Mascota(String nombre, float peso, float altura, float largo){
+	public Mascota(String nombre, float peso, float altura, float largo, float calidad){
 		typeClass= getTypeClass(); 
 		this.nombre = nombre;
 		this.peso = peso;
 		this.altura = altura;
 		this.largo = largo;
+		this.calidad = calidad;
 	}
 	
 	/**
@@ -94,6 +96,14 @@ public abstract class Mascota {
 
 	public void setPropietario(Person propietario) {
 		this.propietario = propietario;
+	}
+	
+	public void setCalidad(float calidad){
+		this.calidad = calidad;
+	}
+	
+	public float getCalidad(){
+		return calidad;
 	}
 	
 	@Override

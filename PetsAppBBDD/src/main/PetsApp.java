@@ -29,47 +29,47 @@ public class PetsApp {
 					UserInterface.addMascota(newMascota);
 					break;
 				case "listar":
-					UserInterface.listAllMascotas(BBDDHelper.BbddToList());
+					UserInterface.listAllMascotas(BBDDHelper.dbAddToList());
 					break;
 				case "eliminar":
 					UserInterface.showMenuDelete();
 					String optionDelete = UserInterface.scanOption(list);
 					if(optionDelete.equals("listar")){
-						UserInterface.removeFromIndexMascotas(list);
+						UserInterface.removeFromIndexMascotas(BBDDHelper.dbAddToList());
 					}else if(optionDelete.equals("mascota")){
-						UserInterface.deleteByMascotaNombre(list);
+						UserInterface.deleteByMascotaNombre(BBDDHelper.dbAddToList());
 					}else{
-						UserInterface.deleteByPropietarioNombre(list);
+						UserInterface.deleteByPropietarioNombre(BBDDHelper.dbAddToList());
 					}
 					break;
 				case "editar":
 					UserInterface.showMenuEdit();
-					String optionEdit = UserInterface.scanOption(list);
+					String optionEdit = UserInterface.scanOption(BBDDHelper.dbAddToList());
 					if(optionEdit.equals("listar")){
-						UserInterface.editMascotaListAll(list);
+						UserInterface.editMascotaListAll(BBDDHelper.dbAddToList());
 					}else if(optionEdit.equals("mascota")){
-						UserInterface.editByMascotaNombre(list);
+						UserInterface.editByMascotaNombre(BBDDHelper.dbAddToList());
 					}else{
-						UserInterface.editByPropietarioNombre(list);
+						UserInterface.editByPropietarioNombre(BBDDHelper.dbAddToList());
 					}
 					break;
 				case "buscar":
-					UserInterface.listAllMascotas(UserInterface.showMenuBuscar(list));
+					UserInterface.listAllMascotas(UserInterface.showMenuBuscar(BBDDHelper.dbAddToList()));
 					break;
 				case "mascotas":
-					UserInterface.listAllMascotas(UserInterface.sortMascotasByName(list));
+					UserInterface.listAllMascotas(UserInterface.sortMascotasByName(BBDDHelper.dbAddToList()));
 					break;
 				case "propietarios":
-					UserInterface.listAllMascotas(UserInterface.sortMascotasByPropietarios(list));
+					UserInterface.listAllMascotas(UserInterface.sortMascotasByPropietarios(BBDDHelper.dbAddToList()));
 					break;
 				case "clases":
-					UserInterface.listAllMascotas(UserInterface.showMenuTipos(list));
+					UserInterface.listAllMascotas(UserInterface.showMenuTipos(BBDDHelper.dbAddToList()));
 					break;
 				case "peso":
-					UserInterface.listAllMascotas(UserInterface.sortMascotasByPeso(list));
+					UserInterface.listAllMascotas(UserInterface.sortMascotasByPeso(BBDDHelper.dbAddToList()));
 					break;
 				case "nutricion":
-					UserInterface.listAllMascotas(UserInterface.sortMascotasByNutricion(list));
+					UserInterface.listAllMascotas(UserInterface.sortMascotasByNutricion(BBDDHelper.dbAddToList()));
 					break;
 				case "salir":
 					System.out.println(" <******  GRACIAS POR USAR PETS APP V2.0  ******>");

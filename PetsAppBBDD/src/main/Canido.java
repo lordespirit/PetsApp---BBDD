@@ -2,12 +2,10 @@ package main;
 
 public class Canido extends Mascota {
 
-	private float calidadColmillo;
 	
 	// Llamada al método constructor del padre
-	public Canido(String nombre, float peso, float altura, float largo){
-		super(nombre, peso, altura, largo);
-		this.calidadColmillo = 1;
+	public Canido(String nombre, float peso, float altura, float largo, float calidad){
+		super(nombre, peso, altura, largo,calidad);
 	}
 	
 	// Métodos sobreescritos
@@ -19,17 +17,9 @@ public class Canido extends Mascota {
 
 	@Override // definir metodo abstracto de herencia
 	public float getPesoRacion() {
-		return 0.3f*getPeso()*(2f-calidadColmillo);
+		return 0.3f*getPeso()*(2f-getCalidad());
 	}
 	
-	public float getCalidadColmillo() {
-		return calidadColmillo;
-	}
-
-
-	public void setCalidadColmillo(float calidadColmillo) {
-		this.calidadColmillo = calidadColmillo;
-	}
 
 	@Override
 	protected String getTypeClass() {

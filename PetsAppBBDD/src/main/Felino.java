@@ -2,17 +2,15 @@ package main;
 
 public class Felino extends Mascota {
 
-	private float calidadGarras;
 	
 	// Llamada al método constructor del padre
-	public Felino(String nombre, float peso, float altura, float largo){
-		super(nombre, peso, altura, largo);
-		this.calidadGarras = 1;
+	public Felino(String nombre, float peso, float altura, float largo, float calidad){
+		super(nombre, peso, altura, largo,calidad);
 	}
 
 	@Override
 	public float getPesoRacion() {
-		return 0.2f*getPeso()*(2f-calidadGarras);
+		return 0.2f*getPeso()*(2f-getCalidad());
 	}
 	
 	@Override
@@ -20,13 +18,7 @@ public class Felino extends Mascota {
 		return getPeso()/(getAltura()*getLargo());
 	}
 
-	public float getCalidadGarras() {
-		return calidadGarras;
-	}
 
-	public void setCalidadGarras(float calidadGarras) {
-		this.calidadGarras = calidadGarras;
-	}
 	
 	@Override
 	protected String getTypeClass() {

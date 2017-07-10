@@ -81,7 +81,7 @@ public static void listToBbdd(ArrayList<Mascota> list) {
 	}
 	*/
 
-	public static ArrayList<Mascota> BbddToList() {
+	public static ArrayList<Mascota> dbAddToList() {
 		
 		ArrayList<MascotasMod> listMascotasMod = new ArrayList<MascotasMod>();
 		@SuppressWarnings("unused")
@@ -107,9 +107,11 @@ public static void listToBbdd(ArrayList<Mascota> list) {
 			
 			PersonasMod propietario = null;
 			try {
+				dbPersona.connect("edu", "1234");
 				propietario = dbPersona.select(listMascotasMod.get(i).getIdPropietario());
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
+				dbPersona.close();
 			}
 			String nombrePropietario = propietario.getNombre();
 			String apellidoPropietario = propietario.getApellido();
@@ -120,26 +122,26 @@ public static void listToBbdd(ArrayList<Mascota> list) {
 			Person person = new Person(nombrePropietario+" "+apellidoPropietario+";"+telefonoPropietario+";"+emailPropietario+";"+direccionPropietario);
 			
 			if(listMascotasMod.get(i).getTipo().equals("canido")){
-				Canido mascota = new Canido(listMascotasMod.get(i).getNombre(),listMascotasMod.get(i).getPeso(),listMascotasMod.get(i).getAltura(),listMascotasMod.get(i).getLargo());
-				mascota.setCalidadColmillo(listMascotasMod.get(i).getCalidad());
+				Canido mascota = new Canido(listMascotasMod.get(i).getNombre(),listMascotasMod.get(i).getPeso(),
+						listMascotasMod.get(i).getAltura(),listMascotasMod.get(i).getLargo(),listMascotasMod.get(i).getCalidad());
 				mascota.setPropietario(person);
 				list.add(mascota);
 				
 			}else if(listMascotasMod.get(i).getTipo().equals("felino")){
-				Felino mascota = new Felino(listMascotasMod.get(i).getNombre(),listMascotasMod.get(i).getPeso(),listMascotasMod.get(i).getAltura(),listMascotasMod.get(i).getLargo());
-				mascota.setCalidadGarras(listMascotasMod.get(i).getCalidad());
+				Felino mascota = new Felino(listMascotasMod.get(i).getNombre(),listMascotasMod.get(i).getPeso(),
+						listMascotasMod.get(i).getAltura(),listMascotasMod.get(i).getLargo(),listMascotasMod.get(i).getCalidad());
 				mascota.setPropietario(person);
 				list.add(mascota);
 				
 			}else if(listMascotasMod.get(i).getTipo().equals("roedor")){
-				Roedor mascota = new Roedor(listMascotasMod.get(i).getNombre(),listMascotasMod.get(i).getPeso(),listMascotasMod.get(i).getAltura(),listMascotasMod.get(i).getLargo());
-				mascota.setCalidadPelaje(listMascotasMod.get(i).getCalidad());
+				Roedor mascota = new Roedor(listMascotasMod.get(i).getNombre(),listMascotasMod.get(i).getPeso(),
+						listMascotasMod.get(i).getAltura(),listMascotasMod.get(i).getLargo(),listMascotasMod.get(i).getCalidad());
 				mascota.setPropietario(person);
 				list.add(mascota);
 
 			}else{
-				Ave mascota = new Ave(listMascotasMod.get(i).getNombre(),listMascotasMod.get(i).getPeso(),listMascotasMod.get(i).getAltura(),listMascotasMod.get(i).getLargo());
-				mascota.setCalidadPlumas(listMascotasMod.get(i).getCalidad());
+				Ave mascota = new Ave(listMascotasMod.get(i).getNombre(),listMascotasMod.get(i).getPeso(),
+						listMascotasMod.get(i).getAltura(),listMascotasMod.get(i).getLargo(),listMascotasMod.get(i).getCalidad());
 				mascota.setPropietario(person);
 				list.add(mascota);
 
