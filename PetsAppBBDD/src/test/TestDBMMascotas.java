@@ -43,7 +43,7 @@ public class TestDBMMascotas {
 
 		Person per1 = new Person("Edu Valles;666960446;edu@edu.com;Av. Madrid");
 		Person per2 = new Person("Ana Garcia;222222222;ana@ana.com;Calle Ana 123");
-		Person per3 = new Person("Jose Perez;111111111;jose@.perezcom;Calle Perez 456");
+		Person per3 = new Person("Jose Perez;111111111;jose@perez.com;Calle Perez 456");
 
 		
 		Ave ave1 = new Ave("Piolin",0.20f,0.11f,0.04f,0.6f);
@@ -151,6 +151,5 @@ public class TestDBMMascotas {
 		}
 
 	}
-	
 	
 }

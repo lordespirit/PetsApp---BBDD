@@ -1,14 +1,10 @@
 package main;
 
 import java.util.ArrayList;
-
 import java.util.Comparator;
-import java.util.Map;
-import java.util.TreeMap;
 
 import dao.DBMMascota;
 import dao.DBMPersonas;
-import data.GsonHelper;
 import model.MascotasMod;
 import model.PersonasMod;
 import util.Finder;
@@ -16,18 +12,6 @@ import util.Input;
 
 public class UserInterface {
 	
-	private static final String[] ESPECIES = new String[]{"gato", "perro", "ave", "roedor"};
-		
-	@SuppressWarnings("rawtypes")
-	static Map<String, Class> map = new TreeMap<String, Class>();
-	/** Adicione las clases que sea necesario */
-	 static {
-	        map.put(ESPECIES[0],Felino.class);
-	        map.put(ESPECIES[1],Canido.class);
-	        map.put(ESPECIES[2],Ave.class);
-	        map.put(ESPECIES[3],Roedor.class);
-	    } 
-
 	public static void showWelcome(){
 		System.out.println("**************************************");
 		System.out.println("************* BIENVENIDO *************");
@@ -159,10 +143,9 @@ public class UserInterface {
 	
 	public static void showMenuEdit(){
 		System.out.println("**************** MENÚ EDICIÓN ****************");
-		System.out.println("Elije opción para editar");
-		System.out.println("> listar [todo]");
-		System.out.println("> mascota [busca por nombre de mascota]");
-		System.out.println("> propietario [busca por nombre de propietario]");
+		System.out.println("Escoge la tabla a editar : ");
+		System.out.println("> Mascota ");
+		System.out.println("> Propietario ");
 
 	}
 	
@@ -178,7 +161,7 @@ public class UserInterface {
 	public static String scanOption(ArrayList<Mascota> list) {
 		String option;
 		do{
-			System.out.print("Elige Opción : ");
+			System.out.print("Opción : ");
 			option = Input.scannLine().toLowerCase();
 			if(!(option.equals("listar")||option.equals("mascota")||option.equals("propietario"))){
 				System.err.println("Error. Opción incorrecta");
@@ -188,39 +171,35 @@ public class UserInterface {
 		return option;
 	}
 	
-	public static void editIndex(ArrayList<Mascota> list, int index){
+	public static void editMascota(int index){
 		
-		System.out.println("************************************************ Registro a editar ********************************************************");
-		System.out.println("Nombre: " +list.get(index).getNombre() + ", Peso: " + list.get(index).getPeso() +
-				", Altura: " + list.get(index).getAltura() + ", Largo: " + list.get(index).getLargo());
-		System.out.println("Propietario: " + list.get(index).getPropietario().getFullName() + ", " + list.get(index).getPropietario().getPhone() +
-		", " +list.get(index).getPropietario().getEmail() + ", " +list.get(index).getPropietario().getAddress());
-		System.out.println("***************************************************************************************************************************");
-		
-		String option;
-		do{
-		System.out.println("Deseas editar la mascota o el propietario? : ");
-		option = Input.scannLine().toLowerCase();
-		if(!(option.equals("mascota")||option.equals("propietario"))){
-			System.err.println("Error, opción no válida.");
+		DBMMascota dbManagerMascotas = new DBMMascota("localhost","pets","mascotas");
+		MascotasMod mascotaResult = null;
+		try {
+			dbManagerMascotas.connect("edu", "1234");
+			mascotaResult = dbManagerMascotas.select(index);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			dbManagerMascotas.close(); 
 		}
-		}while(!(option.equals("mascota")||option.equals("propietario")));
 		
-		if(option.equals("mascota")){
+		System.out.println("********************************************* Editar Mascota *****************************************************");
+		System.out.println("Nombre: " +mascotaResult.getNombre() + ", Peso: " + mascotaResult.getPeso() +
+				", Altura: " + mascotaResult.getAltura() + ", Largo: " + mascotaResult.getLargo() + ", Calidad: "+ mascotaResult.getCalidad());
+		
+		System.out.println("********************************************** Menú edición ******************************************************");
+		
 			String nombre;
-			String nombreRespaldo = list.get(index).getNombre();
+			String nombreRespaldo = mascotaResult.getNombre();
 			Float peso;
-			Float pesoRespaldo = list.get(index).getPeso();	
+			Float pesoRespaldo = mascotaResult.getPeso();	
 			Float altura;
-			Float alturaRespaldo= list.get(index).getAltura();
+			Float alturaRespaldo= mascotaResult.getAltura();
 			Float largo;
-			Float largoRespaldo = list.get(index).getLargo();
-			
-			System.out.println("********************** Edición de Mascota ***********************");
-			System.out.println("*****************************************************************");
-			System.out.println("Nombre: " +list.get(index).getNombre() + ", Peso: " + list.get(index).getPeso() +
-					", Altura: " + list.get(index).getAltura() + ", Largo: " + list.get(index).getLargo());
-			System.out.println("*****************************************************************");
+			Float largoRespaldo = mascotaResult.getLargo();
+			Float calidad;
+			Float calidadRespaldo = mascotaResult.getCalidad();
 			
 			System.out.println(" [ Dejar en blanco si se desea conservar el dato ] ");
 			System.out.print("> Nuevo nombre de mascota: ");
@@ -229,7 +208,7 @@ public class UserInterface {
 				nombre = nombreRespaldo;
 			
 			String editar;
-			System.out.print("> ¿Editar peso? [Dejar en blanco para conservar antiguo dato] ");
+			System.out.print("> ¿Editar peso? s/n [Dejar en blanco para conservar antiguo dato] ");
 			editar = Input.scannLine();
 			if(editar.equals("")||editar.toLowerCase().toCharArray()[0]=='n'){
 				peso = pesoRespaldo;
@@ -238,7 +217,7 @@ public class UserInterface {
 				peso = Input.scannFloat();
 			}
 			
-			System.out.print("> ¿Editar altura? [Dejar en blanco para conservar antiguo dato] ");
+			System.out.print("> ¿Editar altura? s/n [Dejar en blanco para conservar antiguo dato] ");
 			editar = Input.scannLine();
 			if(editar.equals("")||editar.toLowerCase().toCharArray()[0]=='n'){
 				altura = alturaRespaldo;
@@ -247,7 +226,7 @@ public class UserInterface {
 				altura = Input.scannFloat();
 			}
 			
-			System.out.print("> ¿Editar largo? [Dejar en blanco para conservar antiguo dato] ");
+			System.out.print("> ¿Editar largo? s/n [Dejar en blanco para conservar antiguo dato] ");
 			editar = Input.scannLine();
 			if(editar.equals("")||editar.toLowerCase().toCharArray()[0]=='n'){
 				largo = largoRespaldo;
@@ -255,34 +234,70 @@ public class UserInterface {
 				System.out.print("> Nuevo largo de mascota: ");
 				largo = Input.scannFloat();
 			}
+			
+			System.out.print("> ¿Editar calidad? s/n [Dejar en blanco para conservar antiguo dato] ");
+			editar = Input.scannLine();
+			if(editar.equals("")||editar.toLowerCase().toCharArray()[0]=='n'){
+				calidad = calidadRespaldo;
+			}else{
+				do{	
+					System.out.print("> Nueva calidad de la mascota. Estado de salud visual [formato de 0,0 a 1,0] : ");
+					calidad = Input.scannFloat();
+					if(calidad<0||calidad>1)
+						System.err.println("Calidad entre 0 y 1");
+				}while(calidad<0||calidad>1);
+			}
 				
-			list.get(index).setNombre(nombre);
-			list.get(index).setAltura(altura);
-			list.get(index).setLargo(largo);
-			list.get(index).setPeso(peso);
+			mascotaResult.setNombre(nombre);
+			mascotaResult.setAltura(altura);
+			mascotaResult.setLargo(largo);
+			mascotaResult.setPeso(peso);
+			mascotaResult.setCalidad(calidad);
+			
+			try {
+				dbManagerMascotas.connect("edu", "1234");
+				dbManagerMascotas.update(mascotaResult);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				dbManagerMascotas.close(); 
+			}
 			
 			System.out.println("********************* Cambios realizados correctamente *********************");
-			System.out.println("Nombre: " +list.get(index).getNombre() + ", Peso: " + list.get(index).getPeso() +
-					", Altura: " + list.get(index).getAltura() + ", Largo: " + list.get(index).getLargo());
+			System.out.println("Nombre: " +mascotaResult.getNombre() + ", Peso: " + mascotaResult.getPeso() +
+					", Altura: " + mascotaResult.getAltura() + ", Largo: " + mascotaResult.getLargo()+ ", Calidad: " + mascotaResult.getCalidad());
 			System.out.println("****************************************************************************");
 			
-		}else{
-			
-			String nombreRespaldo = list.get(index).getPropietario().getName();
-			String apellidoRespaldo = list.get(index).getPropietario().getSurname();
-			String telefonoRespaldo = list.get(index).getPropietario().getPhone();
-			String eMailRespaldo = list.get(index).getPropietario().getEmail();
-			String addressRespaldo = list.get(index).getPropietario().getAddress();
+		}
+	
+	public static void editPropietario(int index){
+		
+		DBMPersonas dbManagerPersonas = new DBMPersonas("localhost", "pets", "personas");
+		PersonasMod personaResult = null;
+		try {
+			dbManagerPersonas.connect("edu", "1234");
+			personaResult = dbManagerPersonas.select(index);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			dbManagerPersonas.close(); 
+		}
+		
+			String nombreRespaldo = personaResult.getNombre();
+			String apellidoRespaldo = personaResult.getApellido();
+			String telefonoRespaldo = personaResult.getTelefono();
+			String eMailRespaldo = personaResult.getEmail();
+			String addressRespaldo = personaResult.getDireccion();
 			String nombre;
 			String apellido;
 			String telefono;
-			String eMail;
-			String address;
+			String email;
+			String direccion;
 			
 			System.out.println("***************************** Edición de Propietario ******************************");
 			System.out.println("***********************************************************************************");
-			System.out.println("Nombre: " +list.get(index).getPropietario().getFullName() + ", Telefono: " + list.get(index).getPropietario().getPhone() +
-					", Correo: " + list.get(index).getPropietario().getEmail() + ", Dirección: " + list.get(index).getPropietario().getAddress());
+			System.out.println("Nombre: " + personaResult.getNombre() + ", Apellido:  "+ personaResult.getApellido() + ", Telefono: " + 
+					personaResult.getTelefono() + ", Correo: " + personaResult.getEmail() + ", Dirección: " + personaResult.getDireccion());
 			System.out.println("***********************************************************************************");
 			System.out.println(" [ Dejar en blanco si se desea conservar el dato ] ");
 			System.out.print("> Nuevo nombre de propietario: ");
@@ -303,57 +318,47 @@ public class UserInterface {
 			
 			do{
 				System.out.print("> Nuevo correo electrónico de propietario: ");
-				eMail = Input.scannLine();
-				if(eMail.equals(""))
-					eMail = eMailRespaldo;
-				if(!mailValidator(eMail)){
+				email = Input.scannLine();
+				if(email.equals(""))
+					email = eMailRespaldo;
+				if(!mailValidator(email)){
 					System.out.println("El correo no está en formato correcto...");
 				}
-			}while(!mailValidator(eMail));
+			}while(!mailValidator(email));
 			
 			System.out.print("> Nueva dirección de propietario: ");
-			address = Input.scannLine();
+			direccion = Input.scannLine();
 			
 			if(nombre.equals(""))
 				nombre  = nombreRespaldo;
 			if(apellido.equals(""))
 				apellido = apellidoRespaldo;
-			if(address.equals(""))
-				address = addressRespaldo;
+			if(direccion.equals(""))
+				direccion = addressRespaldo;
 			
-			list.get(index).getPropietario().setName(nombre);
-			list.get(index).getPropietario().setSurname(apellido);
-			list.get(index).getPropietario().setAddress(address);
-			list.get(index).getPropietario().setEmail(eMail);
-			list.get(index).getPropietario().setPhone(telefono);
+			personaResult.setNombre(nombre);
+			personaResult.setApellido(apellido);
+			personaResult.setTelefono(telefono);
+			personaResult.setEmail(email);
+			personaResult.setDireccion(direccion);
+			
+			try {
+				dbManagerPersonas.connect("edu", "1234");
+				dbManagerPersonas.update(personaResult);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				dbManagerPersonas.close(); 
+			}
 			
 			System.out.println("******************************** Cambios realizados correctamente **********************************");
-			System.out.println("Nombre: " +list.get(index).getPropietario().getFullName() + ", Telefono: " + list.get(index).getPropietario().getPhone() +
-					", Correo: " + list.get(index).getPropietario().getEmail() + ", Dirección: " + list.get(index).getPropietario().getAddress());
+			System.out.println("Nombre: " +personaResult.getNombre() + ", Apellido: " + personaResult.getApellido() + ", Telefono: " + personaResult.getTelefono() +
+					", Correo: " +personaResult.getEmail() + ", Dirección: " + personaResult.getDireccion());
 			System.out.println("***************************************************************************************************");
 			
-		}
+			
 	}
 	
-	public static void editMascotaListAll(ArrayList<Mascota> list){
-		
-		if(list.size()==0){
-			System.err.println("Lista vacía. No se encuentra resultados");
-		}else{
-			
-			int index;
-			System.out.println("********************* Menú edición por listado completo *********************");
-			do{
-				System.out.println("Escoge un índice a editar : ");
-				listAllMascotas(list);
-				index = Input.scannInt();
-				if(index<1||index>list.size()){
-					System.err.println("Posición no válida.");
-				}
-			}while(index<1||index>list.size());
-			editIndex(list, --index);
-		}
-	}
 	
 	public static void deleteByMascotaNombre(ArrayList<Mascota> list) {
 		
@@ -387,15 +392,16 @@ public class UserInterface {
 						i++;
 					arrayIndex = new Integer[i];
 					i=0;
-					System.out.print("Selecciona el número de índice a eliminar : ");
+					System.out.println("Listado de coincidencias:");
 					for(MascotasMod mascota: resultado){
 						System.out.println("ID: " + mascota.getId() +" | Nombre: " +mascota.getNombre() + " | Tipo: " + mascota.getTipo());
 						arrayIndex[i++] = mascota.getId();
 					}
+					System.out.print("Selecciona una ID del listado : ");
 					index = Input.scannInt();
 					isCorrect = checkIndex(arrayIndex,index);
 					if(!isCorrect){
-						System.err.println("Error, índice incorrecto.");
+						System.err.println("\nError, índice incorrecto.");
 					}
 				}while(!isCorrect);
 			
@@ -446,15 +452,16 @@ public class UserInterface {
 						i++;
 					arrayIndex = new Integer[i];
 					i=0;
-					System.out.print("Selecciona el número de índice a eliminar : ");
+					System.out.println("Listado de coincidencias: ");
 					for(PersonasMod person: resultado){
 						System.out.println("ID: " + person.getId() +" | Nombre: " +person.getNombre() + " | Apellido: " + person.getApellido());
 						arrayIndex[i++] = person.getId();
 					}
+					System.out.print("Escoge una ID del listado anterior: ");
 					index = Input.scannInt();
 					isCorrect = checkIndex(arrayIndex,index);
 					if(!isCorrect){
-						System.err.println("Error, índice incorrecto.");
+						System.err.println("\nError, índice incorrecto.");
 					}
 				}while(!isCorrect);
 				
@@ -504,31 +511,57 @@ public class UserInterface {
 	}
 
 	public static void editByMascotaNombre(ArrayList<Mascota> list) {
-		
+
 		if(list.size()==0){
 			System.err.println("Lista vacía. No se encuentra resultados");
 		}else{
 
 			System.out.println("********************* Menú edición por búsqueda de Mascota por nombre *********************");
 			String nombreMascota = scanNombreMascota();
-			ArrayList<Mascota> listadoDeBusqueda= searchNameMascota(list, nombreMascota);
-			if(listadoDeBusqueda==null){
-				System.err.println("No se encontraron resultados");
-			}else if(listadoDeBusqueda.size()==1){
-				editIndex(listadoDeBusqueda,0);
+			
+			DBMMascota dbManagerMascotas =   new DBMMascota("localhost", "pets", "mascotas");
+			
+			ArrayList<MascotasMod> mascotasList = null;
+			
+			try {
+				dbManagerMascotas.connect("edu", "1234");
+				mascotasList = dbManagerMascotas.select("nombre","LIKE","'"+nombreMascota+"%'");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				dbManagerMascotas.close(); 
+			}
+			
+			if(mascotasList.size()==0){
+				System.err.println("La búsqueda no ha dado resultados");
 			}else{
-				int index;
+				Integer index;
+				Integer arrayIndex[];
+				Integer contador = 0;
+				
+				for(MascotasMod mascota: mascotasList)
+					contador++;
+				
+				arrayIndex = new Integer[contador];
+				contador = 0;
+				for(MascotasMod mascota: mascotasList)
+					arrayIndex[contador++] = mascota.getId();
+				
+				for(MascotasMod mascota: mascotasList){
+					System.out.println("ID: " + mascota.getId() + "\t Nombre: " + mascota.getNombre() + "\t Tipo: " + mascota.getTipo() +
+							"\t Peso: " + mascota.getPeso() + "\t Altura: " + mascota.getAltura() + "\t Largo: " + mascota.getLargo());
+				}
+				
+				boolean isCorrect;
 				do{
-					listAllMascotas(listadoDeBusqueda);
-					System.out.println("Selecciona el índice a editar");
+					System.out.print("Escoge una ID de la lista anterior para editar esa mascota: ");
 					index = Input.scannInt();
-					if(index<1||index>listadoDeBusqueda.size()){
-						System.err.println("Error, índice incorrecto.");
-					}
-				}while(index<1||index>listadoDeBusqueda.size());
-				index--;
-				int indexReal = list.indexOf(listadoDeBusqueda.get(index));
-				editIndex(list,indexReal);
+					isCorrect = checkIndex(arrayIndex, index);
+					if(!isCorrect)
+						System.err.println("\nID incorrecta... vuelve a probar");
+				}while(!isCorrect);
+				
+				editMascota(index);
 			}
 		}
 	}
@@ -538,27 +571,53 @@ public class UserInterface {
 		if(list.size()==0){
 			System.err.println("Lista vacía. No se encuentra resultados");
 		}else{
+
+			System.out.println("********************* Menú edición tabla Propietario *********************");
+			String nombrePersona = scanNombrePropietario();
 			
-			System.out.println("********************* Menú edición por búsqueda de Propietario por nombre *********************");
-			String nombrePropietario = scanNombrePropietario();
-			ArrayList<Mascota> listadoDeBusqueda= searchNamePropietario(list, nombrePropietario);
-			if(listadoDeBusqueda==null){
-				System.err.println("No se encontraron resultados");
-			}else if(listadoDeBusqueda.size()==1){
-				editIndex(listadoDeBusqueda,0);
+			DBMPersonas dbManagerPersonas =   new DBMPersonas("localhost", "pets", "personas");
+			
+			ArrayList<PersonasMod> personasList = null;
+			
+			try {
+				dbManagerPersonas.connect("edu", "1234");
+				personasList = dbManagerPersonas.select("nombre","LIKE","'"+nombrePersona+"%'");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				dbManagerPersonas.close(); 
+			}
+			
+			if(personasList.size()==0){
+				System.err.println("La búsqueda no ha dado resultados");
 			}else{
-				int index;
+				Integer index;
+				Integer arrayIndex[];
+				Integer contador = 0;
+				
+				for(PersonasMod persona: personasList)
+					contador++;
+				
+				arrayIndex = new Integer[contador];
+				contador = 0;
+				for(PersonasMod persona: personasList)
+					arrayIndex[contador++] = persona.getId();
+				
+				for(PersonasMod persona: personasList){
+					System.out.println("ID: " + persona.getId() + "\t Nombre: " + persona.getNombre() + "\t Apellido: " + persona.getApellido() +
+							"\t Telefono: " + persona.getTelefono() + "\t Email: " + persona.getEmail() + "\t Dirección: " + persona.getDireccion());
+				}
+				
+				boolean isCorrect;
 				do{
-					listAllMascotas(listadoDeBusqueda);
-					System.out.println("Selecciona el índice a editar");
+					System.out.print("Escoge una ID de la lista anterior para editar esa mascota: ");
 					index = Input.scannInt();
-					if(index<1||index>listadoDeBusqueda.size()){
-						System.err.println("Error, índice incorrecto.");
-					}
-				}while(index<1||index>listadoDeBusqueda.size());
-				index--;
-				int indexReal = list.indexOf(listadoDeBusqueda.get(index));
-				editIndex(list,indexReal);
+					isCorrect = checkIndex(arrayIndex, index);
+					if(!isCorrect)
+						System.err.println("\nID incorrecta... vuelve a probar");
+				}while(!isCorrect);
+				
+				editPropietario(index);
 			}
 		}
 		
@@ -673,12 +732,6 @@ public class UserInterface {
 		
 		
 	}
-	
-	public static void removeMascota(int indiceMascota, ArrayList<Mascota> list) {
-			list.remove(indiceMascota);
-			GsonHelper.listaMascotasToJson(list);
-	}
-	
 	
 	private static boolean mailValidator(String mail){
 		String pattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"

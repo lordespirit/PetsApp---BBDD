@@ -11,13 +11,7 @@ public class PetsApp {
 
 	public static void main(String args[]){	
 		
-		//final String FILE = "veterinaria.txt";
-		//String str = null; 
 		ArrayList<Mascota> list = null;
-		
-		//str = FileHelper.readFileAsString(FILE);
-		//list = GsonHelper.jsonFromArrayListMascotaToJson(str);
-		
 		String option = null;
 		UserInterface.showWelcome();
 		do{
@@ -45,11 +39,9 @@ public class PetsApp {
 				case "editar":
 					UserInterface.showMenuEdit();
 					String optionEdit = UserInterface.scanOption(BBDDHelper.dbAddToList());
-					if(optionEdit.equals("listar")){
-						UserInterface.editMascotaListAll(BBDDHelper.dbAddToList());
-					}else if(optionEdit.equals("mascota")){
+					if(optionEdit.equals("mascota")){
 						UserInterface.editByMascotaNombre(BBDDHelper.dbAddToList());
-					}else{
+					}else if(optionEdit.equals("propietario")){
 						UserInterface.editByPropietarioNombre(BBDDHelper.dbAddToList());
 					}
 					break;
@@ -79,9 +71,7 @@ public class PetsApp {
 					break;
 			}	
 		}while(!option.equals("salir"));
-		//str = GsonHelper.listaMascotasToJson(list);
-		//FileHelper.writeFileAsString(str, FILE);
-		//BBDDHelper.listToBbdd(list);
+		
 	}
 	
 	
